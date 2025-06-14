@@ -14,4 +14,5 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
-
+app:
+  credito-topic: "topico-creditos"
