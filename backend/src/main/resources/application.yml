@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: credit-challenge-api
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: true
+
