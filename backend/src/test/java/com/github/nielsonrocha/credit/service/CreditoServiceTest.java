@@ -12,6 +12,7 @@ import com.github.nielsonrocha.credit.entity.Credito;
 import com.github.nielsonrocha.credit.exception.CreditoNotFoundException;
 import com.github.nielsonrocha.credit.mapper.CreditoMapper;
 import com.github.nielsonrocha.credit.repository.CreditoRepository;
+import com.github.nielsonrocha.credit.service.impl.CreditoServiceImpl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -35,7 +36,7 @@ class CreditoServiceTest {
 
   @Mock private CreditoMapper creditoMapper;
 
-  @InjectMocks private CreditoService creditoService;
+  @InjectMocks private CreditoServiceImpl creditoService;
 
   private final String TOPICO = "credito-topic";
   private Credito credito;
