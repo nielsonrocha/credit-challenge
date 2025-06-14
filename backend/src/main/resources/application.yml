@@ -7,4 +7,11 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
     validate-on-migrate: true
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/creditos_db}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASS:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
 
