@@ -10,7 +10,7 @@ public record CreditoDTO(
     @JsonFormat(pattern = "yyyy-MM-dd") LocalDate dataConstituicao,
     BigDecimal valorIssqn,
     String tipoCredito,
-    String simplesNacional,
+    Boolean simplesNacional,
     BigDecimal aliquota,
     BigDecimal valorFaturado,
     BigDecimal valorDeducao,
