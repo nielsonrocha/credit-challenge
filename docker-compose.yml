@@ -63,7 +63,7 @@ services:
     networks:
       - creditos-network
     healthcheck:
-      test: ["CMD", "kafka-topics", "--zookeeper", "zookeeper:2181", "--list"]
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -88,6 +88,36 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  # Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: creditos-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DATABASE_URL: jdbc:postgresql://postgres:5432/creditos_db
+      DATABASE_USER: postgres
+      DATABASE_PASS: postgres
+      KAFKA_HOST: kafka:9092
+      JAVA_OPTS: "-Xmx512m -Xms256m"
+    ports:
+      - "8080:8080"
+    networks:
+      - creditos-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
 volumes:
   postgres_data:
