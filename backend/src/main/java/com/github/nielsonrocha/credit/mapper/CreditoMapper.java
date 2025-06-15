@@ -4,6 +4,7 @@ import com.github.nielsonrocha.credit.dto.CreditoDTO;
 import com.github.nielsonrocha.credit.entity.Credito;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
@@ -13,5 +14,8 @@ import org.mapstruct.ReportingPolicy;
     unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CreditoMapper {
 
-    CreditoDTO toCreditoDTO(Credito credito);
+  @Mapping(
+      target = "simplesNacional",
+      expression = "java(credito.getSimplesNacional() ? \"Sim\" : \"Não\")")
+  CreditoDTO toCreditoDTO(Credito credito);
 }

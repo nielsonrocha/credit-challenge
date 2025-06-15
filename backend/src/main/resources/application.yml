@@ -21,5 +21,13 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
+    consumer:
+      group-id: credit-group
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.add.type.headers: false
+    listener:
+      missing-topics-fatal: false
 app:
   credito-topic: "topico-creditos"

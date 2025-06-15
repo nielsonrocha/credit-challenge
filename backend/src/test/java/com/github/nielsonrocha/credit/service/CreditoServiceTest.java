@@ -57,7 +57,7 @@ class CreditoServiceTest {
             LocalDate.now(),
             new BigDecimal("100.00"),
             "'ISSQN'",
-            true,
+            "Sim",
             new BigDecimal("5.00"),
             new BigDecimal("2000.00"),
             new BigDecimal("0.00"),
