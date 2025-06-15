@@ -31,3 +31,20 @@ spring:
       missing-topics-fatal: false
 app:
   credito-topic: "topico-creditos"
+server:
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      access: unrestricted
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    enable:
+      all: true
