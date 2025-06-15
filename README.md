@@ -218,21 +218,6 @@ Interface web para monitoramento do Kafka disponível em http://localhost:8090:
 - Métricas de performance
 
 
-```
-
-### Logs e Debug
-
-```bash
-# Logs em tempo real
-docker-compose logs -f
-
-# Logs de um serviço específico
-docker-compose logs -f backend
-
-# Logs com timestamp
-docker-compose logs -f -t
-```
-
 ## Dados de Teste
 
 A aplicação já vem com dados de exemplo inseridos automaticamente:
