@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -22,6 +22,7 @@ public abstract class AbstractIntegrationTest {
 
   protected RequestSpecification requestSpecification;
 
+  @SuppressWarnings("resource")
   @Container
   static PostgreSQLContainer<?> postgres =
       new PostgreSQLContainer<>(DockerImageName.parse("postgres:15-alpine"))
@@ -30,9 +31,9 @@ public abstract class AbstractIntegrationTest {
           .withPassword("postgres");
 
   @Container
-  static KafkaContainer kafka =
-      new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"))
-          .withEmbeddedZookeeper();
+  static KafkaContainer kafka = new KafkaContainer(
+      DockerImageName.parse("apache/kafka:3.7.0"));
+
 
   @DynamicPropertySource
   static void configureProperties(DynamicPropertyRegistry registry) {
@@ -45,15 +46,16 @@ public abstract class AbstractIntegrationTest {
     registry.add("spring.jpa.show-sql", () -> "true");
 
     registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-    registry.add(
-        "spring.kafka.producer.key-serializer",
+    registry.add("spring.kafka.producer.key-serializer",
         () -> "org.apache.kafka.common.serialization.StringSerializer");
-    registry.add(
-        "spring.kafka.producer.value-serializer",
+    registry.add("spring.kafka.producer.value-serializer",
         () -> "org.springframework.kafka.support.serializer.JsonSerializer");
-    registry.add("spring.kafka.consumer.group-id", () -> "credit-test-group");
+    registry.add("spring.kafka.consumer.key-deserializer",
+        () -> "org.apache.kafka.common.serialization.StringDeserializer");
+    registry.add("spring.kafka.consumer.value-deserializer",
+        () -> "org.springframework.kafka.support.serializer.JsonDeserializer");
+    registry.add("spring.kafka.consumer.group-id", () -> "test-group");
     registry.add("spring.kafka.consumer.auto-offset-reset", () -> "earliest");
-    registry.add("spring.kafka.listener.missing-topics-fatal", () -> "false");
     registry.add("spring.kafka.consumer.properties.spring.json.trusted.packages", () -> "*");
 
     registry.add("spring.flyway.enabled", () -> "false");

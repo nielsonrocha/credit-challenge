@@ -29,26 +29,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 @DisplayName("Testes de Integração - CreditoController")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
 
   @Autowired private CreditoRepository creditoRepository;
 
   private Consumer<String, Object> kafkaConsumer;
 
-  @Value("${app.credito-topic:credito-consulta-topic}")
-  private String topico;
-
   @BeforeEach
   void setUpTest() {
-    // Configurar consumer Kafka para testes
     Map<String, Object> consumerProps =
         KafkaTestUtils.consumerProps(kafka.getBootstrapServers(), "test-group", "true");
     consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -71,11 +68,9 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   @Test
   @DisplayName("Deve retornar lista de créditos por NFS-e")
   void deveRetornarCreditosPorNfse() {
-    // Given
-    String numeroNfse = "7891011";
+    var numeroNfse = "7891011";
     criarCreditosParaTeste(numeroNfse);
 
-    // When & Then
     Response response =
         given()
             .spec(requestSpecification)
@@ -95,21 +90,15 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
             .extract()
             .response();
 
-    // Verificar evento Kafka
     verificarEventoKafka("NFSE", numeroNfse);
-
-    // Log da resposta para debug
-    System.out.println("Response: " + response.asString());
   }
 
   @Test
   @DisplayName("Deve retornar crédito específico por número")
   void deveRetornarCreditoPorNumero() {
-    // Given
-    Credito credito = criarCreditoParaTeste();
-    String numeroCredito = credito.getNumeroCredito();
+    var credito = criarCreditoParaTeste();
+    var numeroCredito = credito.getNumeroCredito();
 
-    // When & Then
     given()
         .spec(requestSpecification)
         .pathParam("numeroCredito", numeroCredito)
@@ -127,17 +116,14 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
         .body("valorDeducao", equalTo(credito.getValorDeducao().floatValue()))
         .body("baseCalculo", equalTo(credito.getBaseCalculo().floatValue()));
 
-    // Verificar evento Kafka
     verificarEventoKafka("CREDITO", numeroCredito);
   }
 
   @Test
   @DisplayName("Deve retornar 404 quando NFS-e não encontrada")
   void deveRetornar404QuandoNfseNaoEncontrada() {
-    // Given
-    String numeroNfseInexistente = "999999999";
+    var numeroNfseInexistente = "999999999";
 
-    // When & Then
     given()
         .spec(requestSpecification)
         .pathParam("numeroNfse", numeroNfseInexistente)
@@ -156,10 +142,8 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   @Test
   @DisplayName("Deve retornar 404 quando número do crédito não encontrado")
   void deveRetornar404QuandoCreditoNaoEncontrado() {
-    // Given
-    String numeroCreditoInexistente = "999999";
+    var numeroCreditoInexistente = "999999";
 
-    // When & Then
     given()
         .spec(requestSpecification)
         .pathParam("numeroCredito", numeroCreditoInexistente)
@@ -177,11 +161,9 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   @Test
   @DisplayName("Deve validar schema JSON da resposta")
   void deveValidarSchemaJsonDaResposta() {
-    // Given
-    String numeroNfse = "7891011";
+    var numeroNfse = "7891011";
     criarCreditosParaTeste(numeroNfse);
 
-    // When & Then
     given()
         .spec(requestSpecification)
         .pathParam("numeroNfse", numeroNfse)
@@ -195,11 +177,9 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   @Test
   @DisplayName("Deve testar performance da consulta")
   void deveTestarPerformanceDaConsulta() {
-    // Given
-    String numeroNfse = "7891011";
+    var numeroNfse = "7891011";
     criarCreditosParaTeste(numeroNfse);
 
-    // When & Then
     given()
         .spec(requestSpecification)
         .pathParam("numeroNfse", numeroNfse)
@@ -213,7 +193,7 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   @Test
   @DisplayName("Deve lidar com caracteres especiais no número da NFS-e")
   void deveLidarComCaracteresEspeciais() {
-    String numeroNfseComEspeciais = "ABC-123/2024";
+    var numeroNfseComEspeciais = "ABC-123/2024";
 
     given()
         .spec(requestSpecification)
@@ -225,7 +205,7 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   }
 
   private void criarCreditosParaTeste(String numeroNfse) {
-    Credito credito1 =
+    var credito1 =
         Credito.builder()
             .numeroCredito("123456")
             .numeroNfse(numeroNfse)
@@ -239,7 +219,7 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
             .baseCalculo(new BigDecimal("25000.00"))
             .build();
 
-    Credito credito2 =
+    var credito2 =
         Credito.builder()
             .numeroCredito("789012")
             .numeroNfse(numeroNfse)
@@ -257,7 +237,7 @@ class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
   }
 
   private Credito criarCreditoParaTeste() {
-    Credito credito =
+    var credito =
         Credito.builder()
             .numeroCredito("654321")
             .numeroNfse("1122334")
