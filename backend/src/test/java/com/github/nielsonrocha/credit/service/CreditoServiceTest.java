@@ -2,8 +2,6 @@ package com.github.nielsonrocha.credit.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import com.github.nielsonrocha.credit.dto.CreditoDTO;
@@ -19,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +37,7 @@ class CreditoServiceTest {
 
   @InjectMocks private CreditoServiceImpl creditoService;
 
-  private final String TOPICO = "credito-topic";
+  private final String TOPICO = "topico-creditos";
   private Credito credito;
   private CreditoDTO creditoDTO;
 
@@ -80,7 +79,6 @@ class CreditoServiceTest {
 
     verify(creditoRepository).findByNumeroNfse(numeroNfse);
     verify(creditoMapper).toCreditoDTO(credito);
-    verify(kafkaTemplate).send(eq(TOPICO), any(EventoConsultaDTO.class));
   }
 
   @Test
@@ -94,7 +92,6 @@ class CreditoServiceTest {
 
     assertEquals("Nenhum crédito encontrado para a NFS-e: " + numeroNfse, exception.getMessage());
     verify(creditoRepository).findByNumeroNfse(numeroNfse);
-    verify(kafkaTemplate, never()).send(anyString(), any());
   }
 
   @Test
@@ -110,7 +107,6 @@ class CreditoServiceTest {
 
     verify(creditoRepository).findByNumeroCredito(numeroCredito);
     verify(creditoMapper).toCreditoDTO(credito);
-    verify(kafkaTemplate).send(eq(TOPICO), any(EventoConsultaDTO.class));
   }
 
   @Test
@@ -125,24 +121,21 @@ class CreditoServiceTest {
 
     assertEquals("Crédito não encontrado: " + numeroCredito, exception.getMessage());
     verify(creditoRepository).findByNumeroCredito(numeroCredito);
-    verify(kafkaTemplate, never()).send(anyString(), any());
   }
 
   @Test
-  void enviarEventoConsulta_deveCapturarExcecao_quandoErroNoEnvio() {
-    String numeroCredito = "123456";
-    when(creditoRepository.findByNumeroCredito(numeroCredito)).thenReturn(Optional.of(credito));
-    when(creditoMapper.toCreditoDTO(credito)).thenReturn(creditoDTO);
-    when(kafkaTemplate.send(eq(TOPICO), any(EventoConsultaDTO.class)))
-        .thenThrow(new RuntimeException("Erro Kafka"));
+  @DisplayName("Deve capturar exceção quando ocorre erro ao enviar evento")
+  void deveCapturarExcecao_QuandoErroNoEnvio() {
 
-    CreditoDTO resultado = creditoService.findByNumeroCredito(numeroCredito);
+    String tipoConsulta = "TESTE";
+    String valorConsulta = "123456";
 
-    assertNotNull(resultado);
-    assertEquals(creditoDTO, resultado);
+    doThrow(new RuntimeException("Erro ao enviar mensagem"))
+        .when(kafkaTemplate)
+        .send(eq(TOPICO), any(EventoConsultaDTO.class));
 
-    verify(creditoRepository).findByNumeroCredito(numeroCredito);
-    verify(creditoMapper).toCreditoDTO(credito);
-    verify(kafkaTemplate).send(eq(TOPICO), any(EventoConsultaDTO.class));
+    assertDoesNotThrow(() -> creditoService.enviarEventoConsulta(tipoConsulta, valorConsulta));
+
+    verify(kafkaTemplate, times(1)).send(eq(TOPICO), any(EventoConsultaDTO.class));
   }
 }

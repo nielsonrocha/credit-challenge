@@ -33,14 +33,12 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 @DisplayName("Testes de Integração - CreditoController")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles("test")
 class CreditoControllerIntegrationTest extends AbstractIntegrationTest {
 
-  @Autowired private CreditoRepository creditoRepository;
+  @Autowired CreditoRepository creditoRepository;
 
   private Consumer<String, Object> kafkaConsumer;
 
