@@ -39,7 +39,7 @@ RUN chown spring:spring app.jar
 USER spring:spring
 
 ENV JAVA_OPTS="-Xmx512m -Xms256m"
-ENV SPRING_PROFILES_ACTIVE=docker
+ENV SPRING_PROFILES_ACTIVE=production
 
 EXPOSE 8080
 
