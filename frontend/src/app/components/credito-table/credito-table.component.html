@@ -1,0 +1,130 @@
+<div class="table-container">
+  
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando dados...</p>
+  </div>
+
+  <mat-card *ngIf="error && !loading" class="error-card">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error</mat-icon>
+        <h3>Ops! Algo deu errado</h3>
+        <p>{{ error }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!loading && !error && creditos.length > 0" class="table-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>list_alt</mat-icon>
+        Resultados ({{ creditos.length }})
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="desktop-table">
+        <table mat-table [dataSource]="creditos" class="creditos-table">
+          
+          <ng-container matColumnDef="numeroCredito">
+            <th mat-header-cell *matHeaderCellDef>Nº Crédito</th>
+            <td mat-cell *matCellDef="let credito">
+              <strong>{{ credito.numeroCredito }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="numeroNfse">
+            <th mat-header-cell *matHeaderCellDef>NFS-e</th>
+            <td mat-cell *matCellDef="let credito">{{ credito.numeroNfse }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="dataConstituicao">
+            <th mat-header-cell *matHeaderCellDef>Data</th>
+            <td mat-cell *matCellDef="let credito">
+              {{ credito.dataConstituicao | date:'dd/MM/yyyy' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="valorIssqn">
+            <th mat-header-cell *matHeaderCellDef>Valor ISSQN</th>
+            <td mat-cell *matCellDef="let credito" class="valor-cell">
+              {{ credito.valorIssqn | currency:'BRL':'symbol':'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="tipoCredito">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let credito">
+              <mat-chip color="primary" selected>{{ credito.tipoCredito }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="simplesNacional">
+            <th mat-header-cell *matHeaderCellDef>Simples Nacional</th>
+            <td mat-cell *matCellDef="let credito" class="center-cell">
+              <mat-icon [color]="credito.simplesNacional === 'Sim' ? 'primary' : 'warn'">
+                {{ credito.simplesNacional === 'Sim' ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="aliquota">
+            <th mat-header-cell *matHeaderCellDef>Alíquota</th>
+            <td mat-cell *matCellDef="let credito">{{ credito.aliquota }}%</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <div class="mobile-cards">
+        <mat-card *ngFor="let credito of creditos; trackBy: trackByCredito" class="credito-card">
+          <mat-card-content>
+            <div class="card-header">
+              <h4>{{ credito.numeroCredito }}</h4>
+              <mat-chip color="primary" selected>{{ credito.tipoCredito }}</mat-chip>
+            </div>
+            
+            <div class="card-details">
+              <div class="detail-row">
+                <span class="label">NFS-e:</span>
+                <span class="value">{{ credito.numeroNfse }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Data:</span>
+                <span class="value">{{ credito.dataConstituicao | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Valor ISSQN:</span>
+                <span class="value highlight">{{ credito.valorIssqn | currency:'BRL':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Alíquota:</span>
+                <span class="value">{{ credito.aliquota }}%</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Simples Nacional:</span>
+                <mat-icon [color]="credito.simplesNacional === 'Sim' ? 'primary' : 'warn'">
+                  {{ credito.simplesNacional === 'Sim' ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!loading && !error && creditos.length === 0" class="no-results-card">
+    <mat-card-content>
+      <div class="no-results">
+        <mat-icon class="no-results-icon">search_off</mat-icon>
+        <h3>Nenhum resultado encontrado</h3>
+        <p>Tente uma nova pesquisa com outros parâmetros.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

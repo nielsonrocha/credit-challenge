@@ -1,0 +1,52 @@
+<mat-card class="search-card">
+  <mat-card-content>
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="search-form">
+      
+      <!-- Tipo de Consulta -->
+      <div class="filter-section">
+        <mat-button-toggle-group 
+          [value]="tipoSelecionado" 
+          (change)="onTipoChange($event.value)"
+          class="tipo-toggle">
+          <mat-button-toggle value="NFSE">
+            <mat-icon>description</mat-icon>
+            Número NFS-e
+          </mat-button-toggle>
+          <mat-button-toggle value="CREDITO">
+            <mat-icon>credit_card</mat-icon>
+            Número do Crédito
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <!-- Campo de Pesquisa -->
+      <div class="filter-section">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>
+            {{ tipoSelecionado === 'NFSE' ? 'Digite o número da NFS-e' : 'Digite o número do crédito' }}
+          </mat-label>
+          <input 
+            matInput 
+            formControlName="valor"
+            [placeholder]="tipoSelecionado === 'NFSE' ? 'Ex: 123456789' : 'Ex: 654321'"
+            type="text">
+          <mat-icon matSuffix>search</mat-icon>
+          <mat-error *ngIf="isFormInvalid">
+            Campo obrigatório (mínimo 3 caracteres)
+          </mat-error>
+        </mat-form-field>
+
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="searchForm.invalid"
+          class="search-button">
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>
