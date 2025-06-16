@@ -1,7 +1,7 @@
 <div class="app-container">
   <app-header></app-header>
   <main class="main-content">
-    <app-search-filter></app-search-filter>
+    <app-search-filter (pesquisar)="onPesquisar($event)"></app-search-filter>
 
     <app-credito-table 
       [creditos]="creditos"
