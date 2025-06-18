@@ -101,7 +101,7 @@ Antes de executar o projeto, certifique-se de ter instalado:
 
 ```bash
 git clone <url-do-repositorio>
-cd credits-challenge-system
+cd credits-challenge
 ```
 
 ### 2. Execução com Docker (Recomendado)
