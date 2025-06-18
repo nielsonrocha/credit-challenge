@@ -46,11 +46,37 @@
             </td>
           </ng-container>
 
+          <ng-container matColumnDef="valorFaturado">
+            <th mat-header-cell *matHeaderCellDef>Valor Faturado</th>
+            <td mat-cell *matCellDef="let credito" class="valor-cell">
+              {{ credito.valorFaturado | currency:'BRL':'symbol':'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="valorDeducao">
+            <th mat-header-cell *matHeaderCellDef>Valor Dedução</th>
+            <td mat-cell *matCellDef="let credito" class="valor-cell">
+              {{ credito.valorDeducao | currency:'BRL':'symbol':'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="baseCalculo">
+            <th mat-header-cell *matHeaderCellDef>Base de Cálculo</th>
+            <td mat-cell *matCellDef="let credito" class="valor-cell">
+              {{ credito.baseCalculo | currency:'BRL':'symbol':'1.2-2' }}
+            </td>
+          </ng-container>
+
           <ng-container matColumnDef="valorIssqn">
             <th mat-header-cell *matHeaderCellDef>Valor ISSQN</th>
-            <td mat-cell *matCellDef="let credito" class="valor-cell">
+            <td mat-cell *matCellDef="let credito" class="valor-cell valor-destaque">
               {{ credito.valorIssqn | currency:'BRL':'symbol':'1.2-2' }}
             </td>
+          </ng-container>
+
+          <ng-container matColumnDef="aliquota">
+            <th mat-header-cell *matHeaderCellDef>Alíquota</th>
+            <td mat-cell *matCellDef="let credito">{{ credito.aliquota }}%</td>
           </ng-container>
 
           <ng-container matColumnDef="tipoCredito">
@@ -67,11 +93,6 @@
                 {{ credito.simplesNacional === 'Sim' ? 'check_circle' : 'cancel' }}
               </mat-icon>
             </td>
-          </ng-container>
-
-          <ng-container matColumnDef="aliquota">
-            <th mat-header-cell *matHeaderCellDef>Alíquota</th>
-            <td mat-cell *matCellDef="let credito">{{ credito.aliquota }}%</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -95,6 +116,18 @@
               <div class="detail-row">
                 <span class="label">Data:</span>
                 <span class="value">{{ credito.dataConstituicao | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Valor Faturado:</span>
+                <span class="value">{{ credito.valorFaturado | currency:'BRL':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Valor Dedução:</span>
+                <span class="value">{{ credito.valorDeducao | currency:'BRL':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Base de Cálculo:</span>
+                <span class="value">{{ credito.baseCalculo | currency:'BRL':'symbol':'1.2-2' }}</span>
               </div>
               <div class="detail-row">
                 <span class="label">Valor ISSQN:</span>
